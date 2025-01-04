@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,13 +80,24 @@ public class MainActivity extends AppCompatActivity implements ChatAdapter.OnYes
     private void addBotMessage(String message, boolean showYesNoButtons) {
         chatMessages.add(new ChatMessage(message, false, showYesNoButtons));
         chatAdapter.notifyItemInserted(chatMessages.size() - 1);
-        chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
+        chatRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
+            }
+        });
+
     }
 
     private void addUserMessage(String message) {
         chatMessages.add(new ChatMessage(message, true, false));
         chatAdapter.notifyItemInserted(chatMessages.size() - 1);
-        chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
+        chatRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
+            }
+        });
     }
 
     private void processUserInput(String input) {
@@ -154,6 +166,12 @@ public class MainActivity extends AppCompatActivity implements ChatAdapter.OnYes
             sendButton.setEnabled(false);
             inputEditText.setVisibility(View.GONE);
             sendButton.setVisibility(View.GONE);
+            chatRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
+                }
+            });
         }
     }
 }
