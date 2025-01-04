@@ -2,19 +2,19 @@ package com.example.customchatbot;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ChatAdapter.OnYesNoClickListener {
     private RecyclerView chatRecyclerView;
-    private TextInputEditText inputEditText;
-    private MaterialButton sendButton;
+    private EditText inputEditText;
+    private ImageButton sendButton;
 
     private ChatAdapter chatAdapter;
     private List<ChatMessage> chatMessages;
