@@ -33,6 +33,8 @@ android {
 
 dependencies {
 
+    implementation (libs.itext7.core)
+    implementation (libs.html2pdf )
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

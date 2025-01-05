@@ -43,3 +43,4 @@ public class ChatMessage {
         this.userAnswer = userAnswer;
     }
 }
+

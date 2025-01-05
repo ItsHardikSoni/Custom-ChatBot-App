@@ -3,13 +3,12 @@ package com.example.customchatbot;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_message, parent, false);
-        return new ChatViewHolder(view);
+        return new ChatViewHolder(view, onYesNoClickListener, chatMessages);
     }
 
     @Override
@@ -45,20 +44,29 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         return chatMessages.size();
     }
 
-    class ChatViewHolder extends RecyclerView.ViewHolder {
-        TextView messageTextView;
-        TextView userAnswerTextView;
-        LinearLayout yesNoButtonsLayout;
-        MaterialButton yesButton;
-        MaterialButton noButton;
+    public void notifyQuestionAnswered(int position, String answer) {
+        ChatMessage message = chatMessages.get(position);
+        message.setAnswered(true);
+        message.setUserAnswer(answer);
+        notifyItemChanged(position);
+    }
 
-        ChatViewHolder(@NonNull View itemView) {
+    static class ChatViewHolder extends RecyclerView.ViewHolder {
+        TextView messageTextView;
+        LinearLayout yesNoButtonsLayout;
+        Button yesButton;
+        Button noButton;
+        OnYesNoClickListener onYesNoClickListener;
+        List<ChatMessage> chatMessages;
+
+        ChatViewHolder(@NonNull View itemView, OnYesNoClickListener onYesNoClickListener, List<ChatMessage> chatMessages) {
             super(itemView);
             messageTextView = itemView.findViewById(R.id.messageTextView);
-            userAnswerTextView = itemView.findViewById(R.id.userAnswerTextView);
             yesNoButtonsLayout = itemView.findViewById(R.id.yesNoButtonsLayout);
             yesButton = itemView.findViewById(R.id.yesButton);
             noButton = itemView.findViewById(R.id.noButton);
+            this.onYesNoClickListener = onYesNoClickListener;
+            this.chatMessages = chatMessages;
         }
 
         void bind(ChatMessage message, int position) {
@@ -67,44 +75,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 messageTextView.setBackgroundResource(R.drawable.user_message_background);
                 messageTextView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                 yesNoButtonsLayout.setVisibility(View.GONE);
-                userAnswerTextView.setVisibility(View.GONE);
             } else {
                 messageTextView.setBackgroundResource(R.drawable.bot_message_background);
                 messageTextView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
                 if (message.showYesNoButtons()) {
                     if (message.isAnswered()) {
                         yesNoButtonsLayout.setVisibility(View.GONE);
-                        userAnswerTextView.setVisibility(View.GONE);
-                        // Add a new ChatMessage for the user's answer
-                        if (getAdapterPosition() + 1 < chatMessages.size() &&
-                                chatMessages.get(getAdapterPosition() + 1).isUser() &&
-                                chatMessages.get(getAdapterPosition() + 1).getMessage().equals(message.getUserAnswer())) {
-                            // User answer message already exists, do nothing
-                        } else {
-                            chatMessages.add(getAdapterPosition() + 1, new ChatMessage(message.getUserAnswer(), true, false));
-                            notifyItemInserted(getAdapterPosition() + 1);
-                        }
                     } else {
                         yesNoButtonsLayout.setVisibility(View.VISIBLE);
-                        userAnswerTextView.setVisibility(View.GONE);
                         yesButton.setOnClickListener(v -> onYesNoClickListener.onYesClicked(getAdapterPosition()));
                         noButton.setOnClickListener(v -> onYesNoClickListener.onNoClicked(getAdapterPosition()));
                     }
                 } else {
                     yesNoButtonsLayout.setVisibility(View.GONE);
-                    userAnswerTextView.setVisibility(View.GONE);
                 }
             }
         }
-    }
-
-    public void notifyQuestionAnswered(int position, String answer) {
-        ChatMessage message = chatMessages.get(position);
-        message.setAnswered(true);
-        message.setUserAnswer(answer);
-        notifyItemChanged(position);
-        chatMessages.add(position + 1, new ChatMessage(answer, true, false));
-        notifyItemInserted(position + 1);
     }
 }
 

@@ -47,5 +47,15 @@
             android:background="?attr/selectableItemBackground"
             android:padding="8dp" />
 
+        <ImageButton
+            android:id="@+id/downloadButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_download"
+            android:contentDescription="Send"
+            android:visibility="gone"
+            android:background="?attr/selectableItemBackground"
+            android:padding="8dp" />
+
     </LinearLayout>
 </LinearLayout>
